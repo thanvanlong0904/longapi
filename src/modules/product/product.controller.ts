@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './product.schema';
@@ -13,8 +13,11 @@ export class ProductController {
   }
 
   @Get()
-  async findAll(): Promise<Product[]> {
-    return this.productService.findAll();
+  async findAll(
+    @Query('search') search?: string,
+    @Query('sortBy') sortBy?: string,
+  ): Promise<Product[]> {
+    return this.productService.findAll(search, sortBy);
   }
 
   @Get(':id')

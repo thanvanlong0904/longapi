@@ -14,8 +14,23 @@ export class ProductService {
     return newProduct.save();
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productModel.find().exec();
+  async findAll(search?: string, sortBy?: string): Promise<Product[]> {
+    const query: any = {};
+
+    // Nếu có search term, tìm kiếm trong name (case-insensitive)
+    if (search && search.trim()) {
+      query.name = { $regex: search.trim(), $options: 'i' };
+    }
+
+    // Sắp xếp
+    let sort: any = {};
+    if (sortBy === 'price-asc') {
+      sort = { price: 1 }; // Tăng dần
+    } else if (sortBy === 'price-desc') {
+      sort = { price: -1 }; // Giảm dần
+    }
+
+    return this.productModel.find(query).sort(sort).exec();
   }
 
   async findOne(id: string): Promise<Product | null> {
